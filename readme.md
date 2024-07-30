@@ -2,7 +2,7 @@
 
 Add to your application via `npm`:
 ```bash
-npm install connect-mysql-server.io--save
+npm install connect-mysql-server.io --save
 ```
 <br>
 ## Usage
