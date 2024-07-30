@@ -47,7 +47,7 @@ sessionStore.onReady().then(() => {
 
 ```js
 const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
+const MySQLStore = require('connect-mysql-server.io')(session);
 
 const options = {
 	host: 'localhost',
