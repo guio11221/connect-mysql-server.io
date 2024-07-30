@@ -1,0 +1,33 @@
+{
+  "name": "connect-mysql-server.io",
+  "description": "A MySQL session store for express.js",
+  "version": "3.0.3",
+  "main": "index.js",
+  "scripts": {
+    
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/guio11221/connect-mysql-server.io.git"
+  },
+  "author": "Guii Santos <sguii5147@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "debug": "4.3.4",
+    "mysql2": "3.10.2"
+  },
+  "devDependencies": {
+    "express": "4.19.2",
+    "express-session": "1.18.0",
+    "mocha": "10.4.0"
+  },
+  "bugs": {
+    "url": "https://github.com/guio11221/connect-mysql-server.io/issues"
+  },
+  "keywords": [
+    "express",
+    "mysql",
+    "server"
+  ],
+  "homepage": "https://github.com/guio11221/connect-mysql-server.io#readme"
+}
