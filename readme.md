@@ -1,14 +1,19 @@
-## Installation
+# MySQLStore
 
-Add to your application via `npm`:
-```bash
-npm install connect-mysql-server.io--save
+> MySQLStore é um armazenamento de sessão para o middleware `express-session`, que utiliza um banco de dados MySQL para gerenciar sessões de forma persistente. Este módulo é útil para aplicações que precisam armazenar sessões de usuário em um banco de dados relacional.
+
+## Instalação
+
+> Para instalar o MySQLStore, execute o seguinte comando no terminal:
+
+```
+npm install connect-mysql-server.io --save
 ```
 ## Uso
 
 ### Configuração
 
-Para usar o MySQLStore, você precisa criar uma conexão com o banco de dados MySQL e configurar o middleware de sessão no seu aplicativo Express.
+> Para usar o MySQLStore, você precisa criar uma conexão com o banco de dados MySQL e configurar o middleware de sessão no seu aplicativo Express.
 
 ```js
 const express = require('express');
@@ -71,7 +76,7 @@ const sessionStore = new MySQLStore(options);
 
 ## Métodos Disponíveis
 ## get
-chamada ``store`` e um ``session_id`` que você deseja recuperar:`
+> chamada ``store`` e um ``session_id`` que você deseja recuperar:`
 
 ```js
  sessionStore.get(sessionId)
@@ -88,7 +93,7 @@ chamada ``store`` e um ``session_id`` que você deseja recuperar:`
 ```
 
 ## set
-O método ``set`` é utilizado para armazenar uma nova sessão ou atualizar uma sessão existente no banco de dados. 
+> O método ``set`` é utilizado para armazenar uma nova sessão ou atualizar uma sessão existente no banco de dados. 
 
 ```js
 const sessionData = {
@@ -106,7 +111,7 @@ sessionStore.set(sessionId, sessionData)
   });
 ```
 ## destroy
-O método ``destroy`` é usado para excluir uma sessão do banco de dados com base no ``session_id``.
+> O método ``destroy`` é usado para excluir uma sessão do banco de dados com base no ``session_id``.
 ```js
 sessionStore.destroy(sessionId)
   .then(() => {
@@ -118,7 +123,7 @@ sessionStore.destroy(sessionId)
 ```
 
 ## all
-O método ``all`` é usado para recuperar todas as sessões armazenadas no banco de dados. Este método é útil quando você precisa verificar todas as sessões ativas ou realizar operações em massa.
+> O método ``all`` é usado para recuperar todas as sessões armazenadas no banco de dados. Este método é útil quando você precisa verificar todas as sessões ativas ou realizar operações em massa.
 
 ```js
 sessionStore.all()
@@ -130,7 +135,7 @@ sessionStore.all()
 });
 ```
 ## length
-O método ``length`` retorna o número total de sessões armazenadas. Isso pode ser útil para monitorar o uso ou para tomar decisões baseadas na quantidade de sessões ativas.
+> O método ``length`` retorna o número total de sessões armazenadas. Isso pode ser útil para monitorar o uso ou para tomar decisões baseadas na quantidade de sessões ativas.
 
 ```js
 sessionStore.length()
@@ -143,7 +148,7 @@ sessionStore.length()
 ```
 ## clear
 
-O método ``clear`` é usado para remover todas as sessões do banco de dados. Use com cuidado, pois isso excluirá todos os dados de sessão.
+> O método ``clear`` é usado para remover todas as sessões do banco de dados. Use com cuidado, pois isso excluirá todos os dados de sessão.
 
 ```js 
 sessionStore.clear()
@@ -156,8 +161,8 @@ sessionStore.clear()
 ```
 ## exists
 
-O método ``exists`` verifica se uma sessão específica existe no banco de dados. Isso é útil para verificar a validade de uma sessão antes de realizar outras operações.
-`
+> O método ``exists`` verifica se uma sessão específica existe no banco de dados. Isso é útil para verificar a validade de uma sessão antes de realizar outras operações.
+
 ```js
 const sessionId = 'id-da-sessao'; // ID da sessão a ser verificada
 sessionStore.exists(sessionId)
@@ -174,7 +179,7 @@ sessionStore.exists(sessionId)
 ```
 ## clearExpired
 
-O método ``clearExpired`` é responsável por remover sessões que estão expiradas do banco de dados. Isso ajuda a manter a tabela de sessões limpa e otimizada.
+> O método ``clearExpired`` é responsável por remover sessões que estão expiradas do banco de dados. Isso ajuda a manter a tabela de sessões limpa e otimizada.
 
 ```js
 sessionStore.clearExpired()
@@ -187,7 +192,7 @@ sessionStore.clearExpired()
 ```
 ## count
 
-O método ``count`` retorna o número total de sessões armazenadas no banco de dados. Isso é útil para monitorar o uso de sessões e verificar se está dentro dos limites esperados.
+> O método ``count`` retorna o número total de sessões armazenadas no banco de dados. Isso é útil para monitorar o uso de sessões e verificar se está dentro dos limites esperados.
 
 ```js
 sessionStore.count()
@@ -200,7 +205,7 @@ sessionStore.count()
 ```
 ## getSessionData
 
-O método ``getSessionData`` pode ser utilizado para obter dados específicos de uma sessão, em vez de retornar todos os dados da sessão. Isso é útil quando você precisa acessar apenas informações específicas de uma sessão.
+> O método ``getSessionData`` pode ser utilizado para obter dados específicos de uma sessão, em vez de retornar todos os dados da sessão. Isso é útil quando você precisa acessar apenas informações específicas de uma sessão.
 
 ```js
 const sessionId = 'id-da-sessao'; // ID da sessão da qual você deseja obter dados específicos
@@ -214,7 +219,7 @@ sessionStore.getSessionData(sessionId, ['userId', 'role'])
 ```
 ## getAllSessions
 
-O método ``getAllSessions`` permite que você recupere todas as sessões armazenadas no banco de dados. Isso é útil para monitorar o estado atual de todas as sessões ativas.
+> O método ``getAllSessions`` permite que você recupere todas as sessões armazenadas no banco de dados. Isso é útil para monitorar o estado atual de todas as sessões ativas.
 
 ```js 
 sessionStore.getAllSessions()
@@ -227,7 +232,7 @@ sessionStore.getAllSessions()
 ```
 ## deleteSession
 
-O método ``deleteSession`` é responsável por remover uma sessão específica do banco de dados. Isso é útil quando você deseja encerrar uma sessão específica antes do tempo de expiração.
+> O método ``deleteSession`` é responsável por remover uma sessão específica do banco de dados. Isso é útil quando você deseja encerrar uma sessão específica antes do tempo de expiração.
 
 ```js
 const sessionId = 'id-da-sessao';
@@ -242,7 +247,7 @@ sessionStore.deleteSession(sessionId)
 ```
 ## extendSession
 
-O método ``extendSession`` é responsável por estender o tempo de expiração de uma sessão. Isso pode ser útil quando um usuário está ativo e você deseja garantir que sua sessão não expire.
+> O método ``extendSession`` é responsável por estender o tempo de expiração de uma sessão. Isso pode ser útil quando um usuário está ativo e você deseja garantir que sua sessão não expire.
 
 ```js
 const sessionId = 'id-da-sessao';
@@ -256,3 +261,19 @@ sessionStore.extendSession(sessionId, newExpiration)
     console.error('Erro ao estender a sessão:', error);
 });
 ```
+## Autores
+
+- [@guio11221](https://www.github.com/guio11221)
+
+
+## Suporte
+
+> Para suporte, mande um email para sguii5147@gmail.com ou entre em nosso canal do Slack.
+
+
+## Referência
+
+ - [Awesome Readme Templates](https://awesomeopensource.com/project/elangosundar/awesome-README-templates)
+ - [Awesome README](https://github.com/matiassingers/awesome-readme)
+ - [How to write a Good readme](https://bulldogjob.com/news/449-how-to-write-a-good-readme-for-your-github-project)
+
