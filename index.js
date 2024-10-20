@@ -488,6 +488,145 @@ module.exports = function (session) {
       };
     }
   );
+  MySQLStore.prototype.getExpiredSessions = function () {
+    return Promise.resolve().then(() => {
+      debug.log("Fetching expired sessions");
+      const sql = "SELECT * FROM ?? WHERE ?? < ?";
+      const params = [
+        this.options.schema.tableName,
+        this.options.schema.columnNames.expires,
+        Math.round(Date.now() / 1000),
+      ];
+      return this.query(sql, params)
+        .then((result) => {
+          const [rows] = result;
+          return rows;
+        })
+        .catch((error) => {
+          debug.error("Failed to fetch expired sessions.");
+          debug.error(error);
+          throw error;
+        });
+    });
+  };
+
+  MySQLStore.prototype.updateSessionData = function (session_id, partialData) {
+    return this.get(session_id).then((sessionData) => {
+      if (!sessionData) return null;
+      const newData = Object.assign({}, sessionData, partialData);
+      return this.set(session_id, newData);
+    });
+  };
+  
+  MySQLStore.prototype.sessionExists = function (session_id) {
+    return this.get(session_id).then((session) => session !== null);
+  };
+  
+  MySQLStore.prototype.getSessionStats = function () {
+    const now = Math.round(Date.now() / 1000);
+    const activeSessionsSQL = "SELECT COUNT(*) AS active FROM ?? WHERE ?? >= ?";
+    const expiredSessionsSQL = "SELECT COUNT(*) AS expired FROM ?? WHERE ?? < ?";
+    
+    const activeParams = [
+      this.options.schema.tableName,
+      this.options.schema.columnNames.expires,
+      now,
+    ];
+    
+    const expiredParams = [
+      this.options.schema.tableName,
+      this.options.schema.columnNames.expires,
+      now,
+    ];
+  
+    return Promise.all([
+      this.query(activeSessionsSQL, activeParams),
+      this.query(expiredSessionsSQL, expiredParams),
+    ]).then(([activeResult, expiredResult]) => {
+      const [activeRows] = activeResult;
+      const [expiredRows] = expiredResult;
+      return {
+        active: activeRows[0].active,
+        expired: expiredRows[0].expired,
+      };
+    });
+  };
+
+  MySQLStore.prototype.getActiveSessions = function () {
+    return Promise.resolve().then(() => {
+      debug.log("Fetching all active sessions");
+      const sql = "SELECT * FROM ?? WHERE ?? >= ?";
+      const params = [
+        this.options.schema.tableName,
+        this.options.schema.columnNames.expires,
+        Math.round(Date.now() / 1000),
+      ];
+      return this.query(sql, params)
+        .then((result) => {
+          const [rows] = result;
+          return rows;
+        })
+        .catch((error) => {
+          debug.error("Failed to fetch active sessions.");
+          debug.error(error);
+          throw error;
+        });
+    });
+  };
+
+  MySQLStore.prototype.exportSessions = function () {
+    return Promise.resolve().then(() => {
+      debug.log("Exporting all sessions");
+      const sql = "SELECT * FROM ??";
+      const params = [this.options.schema.tableName];
+  
+      return this.query(sql, params)
+        .then((result) => {
+          const [rows] = result;
+          const sessions = rows.map((row) => ({
+            session_id: row[this.options.schema.columnNames.session_id],
+            data: JSON.parse(row[this.options.schema.columnNames.data]),
+            expires: row[this.options.schema.columnNames.expires],
+          }));
+          return JSON.stringify(sessions, null, 2); // Formato JSON bonito
+        })
+        .catch((error) => {
+          debug.error("Failed to export sessions.");
+          debug.error(error);
+          throw error;
+        });
+    });
+  };
+
+  MySQLStore.prototype.notifySimultaneousSessions = function (userId) {
+    return Promise.resolve().then(() => {
+      debug.log(`Checking for simultaneous sessions for user: ${userId}`);
+  
+      const sql = "SELECT COUNT(*) as sessionCount FROM ?? WHERE ?? = ?";
+      const params = [
+        this.options.schema.tableName,
+        this.options.schema.columnNames.user_id,
+        userId,
+      ];
+  
+      return this.query(sql, params)
+        .then((result) => {
+          const [rows] = result;
+          const sessionCount = rows[0].sessionCount;
+          if (sessionCount > 1) {
+            debug.log(`User ${userId} has ${sessionCount} simultaneous sessions.`);
+            // Aqui você pode enviar uma notificação para o usuário
+            console.log(`User ${userId} notified of simultaneous sessions.`);
+          }
+        })
+        .catch((error) => {
+          debug.error(`Failed to check simultaneous sessions for user: ${userId}`);
+          debug.error(error);
+          throw error;
+        });
+    });
+  };
+  
   
   MySQLStore.promiseAllSeries = function (promiseFactories) {
     let result = Promise.resolve();

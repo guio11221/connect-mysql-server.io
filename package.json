@@ -1,10 +1,14 @@
 {
   "name": "connect-mysql-server.io",
   "description": "A MySQL session store for express.js",
-  "version": "3.0.3",
+  "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "mocha --reporter spec",
+    "lint": "eslint .",
+    "prestart": "npm run lint"
   },
   "repository": {
     "type": "git",
@@ -19,7 +23,11 @@
   "devDependencies": {
     "express": "4.19.2",
     "express-session": "1.18.0",
-    "mocha": "10.4.0"
+    "mocha": "10.4.0",
+    "nodemon": "3.0.1",
+    "eslint": "8.48.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-plugin-import": "2.28.0"
   },
   "bugs": {
     "url": "https://github.com/guio11221/connect-mysql-server.io/issues"
@@ -27,6 +35,8 @@
   "keywords": [
     "express",
     "mysql",
+    "session",
+    "store",
     "server"
   ],
   "homepage": "https://github.com/guio11221/connect-mysql-server.io#readme"

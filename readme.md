@@ -1,13 +1,20 @@
-## Installation
+# MySQLStore
 
-Add to your application via `npm`:
-```bash
-npm install connect-mysql-server.io--save
+MySQLStore é um armazenamento de sessão para o middleware `express-session`, que utiliza um banco de dados MySQL para gerenciar sessões de forma persistente. Este módulo é útil para aplicações que precisam armazenar sessões de usuário em um banco de dados relacional.
+
+## Instalação
+
+Para instalar o MySQLStore, execute o seguinte comando no terminal:
+
 ```
-<br>
-## Usage
+npm install connect-mysql-server.io --save
+```
+## Uso
 
-Use with your express session middleware, like this:
+### Configuração
+
+Para usar o MySQLStore, você precisa criar uma conexão com o banco de dados MySQL e configurar o middleware de sessão no seu aplicativo Express.
+
 ```js
 const express = require('express');
 const app = module.exports = express();
@@ -41,9 +48,7 @@ sessionStore.onReady().then(() => {
 	console.error(error);
 });
 ```
-<br>
-
-#### Custom database table schema
+## Custom database table schema
 
 ```js
 const session = require('express-session');
@@ -67,4 +72,90 @@ const options = {
 };
 
 const sessionStore = new MySQLStore(options);
+```
+
+## Métodos Disponíveis
+## get
+chamada ``store`` e um ``session_id`` que você deseja recuperar:`
+
+```js
+ sessionStore.get(sessionId)
+   .then((sessionData) => {
+     if (sessionData) {
+       console.log('Sessão encontrada:', sessionData);
+     } else {
+       console.log('Sessão não encontrada ou expirou.');
+     }
+   })
+   .catch((error) => {
+     console.error('Erro ao buscar a sessão:', error);
+   });
+```
+
+## set
+O método ``set`` é utilizado para armazenar uma nova sessão ou atualizar uma sessão existente no banco de dados. 
+
+```js
+const sessionData = {
+  userId: 123,
+  name: 'John Doe',
+  lastAccess: new Date().toISOString()
+};
+
+sessionStore.set(sessionId, sessionData)
+  .then(() => {
+    console.log('Sessão armazenada com sucesso!');
+  })
+  .catch((error) => {
+    console.error('Erro ao armazenar a sessão:', error);
+  });
+```
+## destroy
+O método ``destroy`` é usado para excluir uma sessão do banco de dados com base no ``session_id``.
+```js
+sessionStore.destroy(sessionId)
+  .then(() => {
+    console.log('Sessão excluída com sucesso!');
+  })
+  .catch((error) => {
+    console.error('Erro ao excluir a sessão:', error);
+});
+```
+
+## all
+O método ``all`` é usado para recuperar todas as sessões armazenadas no banco de dados. Este método é útil quando você precisa verificar todas as sessões ativas ou realizar operações em massa.
+
+```js
+sessionStore.all()
+  .then((sessions) => {
+    console.log('Todas as sessões:', sessions);
+  })
+  .catch((error) => {
+    console.error('Erro ao recuperar as sessões:', error);
+});
+```
+## length
+O método ``length`` retorna o número total de sessões armazenadas. Isso pode ser útil para monitorar o uso ou para tomar decisões baseadas na quantidade de sessões ativas.
+
+```js
+sessionStore.length()
+  .then((count) => {
+    console.log('Número total de sessões:', count);
+  })
+  .catch((error) => {
+    console.error('Erro ao contar as sessões:', error);
+  });
+```
+## clear
+
+O método ``clear`` é usado para remover todas as sessões do banco de dados. Use com cuidado, pois isso excluirá todos os dados de sessão.
+
+```js 
+sessionStore.clear()
+  .then(() => {
+    console.log('Todas as sessões foram excluídas com sucesso!');
+  })
+  .catch((error) => {
+    console.error('Erro ao excluir as sessões:', error);
+});
 ```
