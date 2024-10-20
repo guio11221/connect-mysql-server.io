@@ -1,13 +1,8 @@
-# MySQLStore
+## Installation
 
-MySQLStore é um armazenamento de sessão para o middleware `express-session`, que utiliza um banco de dados MySQL para gerenciar sessões de forma persistente. Este módulo é útil para aplicações que precisam armazenar sessões de usuário em um banco de dados relacional.
-
-## Instalação
-
-Para instalar o MySQLStore, execute o seguinte comando no terminal:
-
-```
-npm install connect-mysql-server.io --save
+Add to your application via `npm`:
+```bash
+npm install connect-mysql-server.io--save
 ```
 ## Uso
 
