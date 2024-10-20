@@ -45,17 +45,11 @@ module.exports = function (session) {
   MySQLStore.prototype.state = "UNINITIALIZED";
 
   MySQLStore.prototype.defaultOptions = {
-    // Whether or not to automatically check for and clear expired sessions:
     clearExpired: true,
-    // How frequently expired sessions will be cleared; milliseconds:
     checkExpirationInterval: 900000,
-    // The maximum age of a valid session; milliseconds:
     expiration: 86400000,
-    // Whether or not to create the sessions database table, if one does not already exist:
     createDatabaseTable: true,
-    // Whether or not to end the database connection when the store is closed:
     endConnectionOnClose: true,
-    // Whether or not to disable touch:
     disableTouch: false,
     charset: "utf8mb4_bin",
     schema: {
@@ -64,6 +58,8 @@ module.exports = function (session) {
         session_id: "session_id",
         expires: "expires",
         data: "data",
+        user_id: "user_id", // Adicionando user_id ao esquema
+        ip_address: "ip_address",
       },
     },
   };
@@ -184,11 +180,11 @@ module.exports = function (session) {
   MySQLStore.prototype.get = function (session_id) {
     return Promise.resolve().then(() => {
       debug.log(`Getting session: ${session_id}`);
-      // LIMIT not needed here because the WHERE clause is searching by the table's primary key.
-      const sql = "SELECT ?? AS data, ?? as expires FROM ?? WHERE ?? = ?";
+      const sql = "SELECT ?? AS data, ?? as expires, ?? as ip_address FROM ?? WHERE ?? = ?";
       const params = [
         this.options.schema.columnNames.data,
         this.options.schema.columnNames.expires,
+        this.options.schema.columnNames.ip_address, // Nova coluna IP
         this.options.schema.tableName,
         this.options.schema.columnNames.session_id,
         session_id,
@@ -215,7 +211,10 @@ module.exports = function (session) {
               throw error;
             }
           }
-          return data;
+          return {
+            data,
+            ip_address: row.ip_address, // Retornando o IP
+          };
         })
         .catch((error) => {
           debug.error(`Failed to get session: ${session_id}`);
@@ -224,8 +223,9 @@ module.exports = function (session) {
         });
     });
   };
+  
 
-  MySQLStore.prototype.set = function (session_id, data) {
+  MySQLStore.prototype.set = function (session_id, data, req) {
     return Promise.resolve().then(() => {
       debug.log(`Setting session: ${session_id}`);
       let expires;
@@ -245,16 +245,22 @@ module.exports = function (session) {
       // Use whole seconds here; not milliseconds.
       expires = Math.round(expires.getTime() / 1000);
       data = JSON.stringify(data);
+  
+      // Captura o IP do cliente
+      const ip_address = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  
       const sql =
-        "INSERT INTO ?? (??, ??, ??) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE ?? = VALUES(??), ?? = VALUES(??)";
+        "INSERT INTO ?? (??, ??, ??, ??) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE ?? = VALUES(??), ?? = VALUES(??)";
       const params = [
         this.options.schema.tableName,
         this.options.schema.columnNames.session_id,
         this.options.schema.columnNames.expires,
         this.options.schema.columnNames.data,
+        this.options.schema.columnNames.ip_address, // Nova coluna IP
         session_id,
         expires,
         data,
+        ip_address, // Adicionando o IP
         this.options.schema.columnNames.expires,
         this.options.schema.columnNames.expires,
         this.options.schema.columnNames.data,
@@ -267,6 +273,7 @@ module.exports = function (session) {
       });
     });
   };
+  
 
   MySQLStore.prototype.touch = function (session_id, data) {
     return Promise.resolve().then(() => {

@@ -159,3 +159,105 @@ sessionStore.clear()
     console.error('Erro ao excluir as sessões:', error);
 });
 ```
+## exists
+
+O método ``exists`` verifica se uma sessão específica existe no banco de dados. Isso é útil para verificar a validade de uma sessão antes de realizar outras operações.
+`
+```js
+const sessionId = 'id-da-sessao'; // ID da sessão a ser verificada
+sessionStore.exists(sessionId)
+  .then((exists) => {
+    if (exists) {
+      console.log('A sessão existe.');
+    } else {
+      console.log('A sessão não existe.');
+    }
+  })
+  .catch((error) => {
+    console.error('Erro ao verificar a existência da sessão:', error);
+});
+```
+## clearExpired
+
+O método ``clearExpired`` é responsável por remover sessões que estão expiradas do banco de dados. Isso ajuda a manter a tabela de sessões limpa e otimizada.
+
+```js
+sessionStore.clearExpired()
+  .then(() => {
+    console.log('Sessões expiradas removidas com sucesso!');
+  })
+  .catch((error) => {
+    console.error('Erro ao remover sessões expiradas:', error);
+});
+```
+## count
+
+O método ``count`` retorna o número total de sessões armazenadas no banco de dados. Isso é útil para monitorar o uso de sessões e verificar se está dentro dos limites esperados.
+
+```js
+sessionStore.count()
+  .then((count) => {
+    console.log(`Total de sessões ativas: ${count}`);
+  })
+  .catch((error) => {
+    console.error('Erro ao contar as sessões:', error);
+});
+```
+## getSessionData
+
+O método ``getSessionData`` pode ser utilizado para obter dados específicos de uma sessão, em vez de retornar todos os dados da sessão. Isso é útil quando você precisa acessar apenas informações específicas de uma sessão.
+
+```js
+const sessionId = 'id-da-sessao'; // ID da sessão da qual você deseja obter dados específicos
+sessionStore.getSessionData(sessionId, ['userId', 'role'])
+  .then((sessionData) => {
+    console.log('Dados da sessão:', sessionData);
+  })
+  .catch((error) => {
+    console.error('Erro ao obter os dados da sessão:', error);
+});
+```
+## getAllSessions
+
+O método ``getAllSessions`` permite que você recupere todas as sessões armazenadas no banco de dados. Isso é útil para monitorar o estado atual de todas as sessões ativas.
+
+```js 
+sessionStore.getAllSessions()
+  .then((sessions) => {
+    console.log('Todas as sessões:', sessions);
+  })
+  .catch((error) => {
+    console.error('Erro ao obter todas as sessões:', error);
+});
+```
+## deleteSession
+
+O método ``deleteSession`` é responsável por remover uma sessão específica do banco de dados. Isso é útil quando você deseja encerrar uma sessão específica antes do tempo de expiração.
+
+```js
+const sessionId = 'id-da-sessao';
+
+sessionStore.deleteSession(sessionId)
+  .then(() => {
+    console.log('Sessão removida com sucesso!');
+  })
+  .catch((error) => {
+    console.error('Erro ao remover a sessão:', error);
+});
+```
+## extendSession
+
+O método ``extendSession`` é responsável por estender o tempo de expiração de uma sessão. Isso pode ser útil quando um usuário está ativo e você deseja garantir que sua sessão não expire.
+
+```js
+const sessionId = 'id-da-sessao';
+const newExpiration = new Date(Date.now() + 30 * 60 * 1000); // 30 minutos a partir de agora
+
+sessionStore.extendSession(sessionId, newExpiration)
+  .then(() => {
+    console.log('Sessão estendida com sucesso!');
+  })
+  .catch((error) => {
+    console.error('Erro ao estender a sessão:', error);
+});
+```
